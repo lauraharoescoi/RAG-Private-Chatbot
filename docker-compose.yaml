@@ -1,6 +1,6 @@
-version: "3"
 services:
   redis:
+    container_name: redis
     image: redis:latest
     ports:
       - "6379:6379"
@@ -8,6 +8,7 @@ services:
       - redis_data:/data
 
   postgres:
+    container_name: postgres
     build: ./postgres
     ports:
       - "5433:5432"
@@ -19,6 +20,7 @@ services:
       POSTGRES_DB: vectordb
 
   backend:
+    container_name: backend
     build: ./backend
     ports:
       - "5000:80"
@@ -26,6 +28,7 @@ services:
       - postgres
 
   llm_service:
+    container_name: llm_service
     build: ./llm_service
     ports:
       - "8000:80"
@@ -33,7 +36,9 @@ services:
       - .env
     depends_on:
       - postgres
+      
   frontend:
+    container_name: frontend
     build: ./frontend
     ports:
       - "3000:3000"
