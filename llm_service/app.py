@@ -32,6 +32,7 @@ ROLE_CLASS_MAP = {
 }
 
 load_dotenv(find_dotenv())
+hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 CONNECTION_STRING = "postgresql+psycopg2://admin:admin@postgres:5432/vectordb"
 COLLECTION_NAME="vectordb"
@@ -47,11 +48,16 @@ class Conversation(BaseModel):
     conversation: List[Message]
 
 # embeddings = OpenAIEmbeddings()
+logger.info(os.getenv("HUGGINGFACEHUB_API_TOKEN"))
+
+logger.info("Loading embeddings")
 embeddings = HuggingFaceInstructEmbeddings(
-    model_name="hkunlp/instructor-xl",
+    model_name="hkunlp/instructor-base",
     model_kwargs={'device': 'cpu'},
     encode_kwargs={'normalize_embeddings': True}
 )
+logger.info("Embeddings loaded")
+logger.info("Loading LLM")
 llm = HuggingFaceHub(
     repo_id="google/gemma-7b",
     model_kwargs={
@@ -62,13 +68,19 @@ llm = HuggingFaceHub(
     "max_length": 16384,
 })
 
-chat = ChatHuggingFace(llm=llm)
+logger.info("LLM loaded")
+
+chat = ChatHuggingFace(llm=llm, token=hf_token)
+
+logger.info("Chat loaded")
 
 store = PGVector(
     collection_name=COLLECTION_NAME,
     connection_string=CONNECTION_STRING,
     embedding_function=embeddings,
 )
+
+logger.info("Store loaded")
 retriever = store.as_retriever()
 
 prompt_template = """As a FAQ Bot for our restaurant, you have the following information about our restaurant:
@@ -103,7 +115,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+logger.info("App loaded")
 @app.post("/llm_service/{conversation_id}")
 async def llm_service(conversation_id: str, conversation: Conversation):
 
