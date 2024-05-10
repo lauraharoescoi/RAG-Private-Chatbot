@@ -5,8 +5,9 @@ import os
 from fastapi.middleware.cors import CORSMiddleware
 # import openai
 from langchain_community.embeddings import HuggingFaceInstructEmbeddings
-from langchain_community.chat_models import ChatHuggingFace 
-from langchain_community.llms import HuggingFaceEndpoint, HuggingFaceHub
+from langchain_community.chat_models.huggingface import ChatHuggingFace 
+from langchain_community.llms import HuggingFaceHub
+from huggingface_hub import login
 
 from langchain.prompts import PromptTemplate
 import logging
@@ -32,7 +33,7 @@ ROLE_CLASS_MAP = {
 }
 
 load_dotenv(find_dotenv())
-hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+# os.environ["HUGGINGFACEHUB_API_TOKEN"] = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 CONNECTION_STRING = "postgresql+psycopg2://admin:admin@postgres:5432/vectordb"
 COLLECTION_NAME="vectordb"
@@ -48,29 +49,31 @@ class Conversation(BaseModel):
     conversation: List[Message]
 
 # embeddings = OpenAIEmbeddings()
-logger.info(os.getenv("HUGGINGFACEHUB_API_TOKEN"))
+logger.info(os.environ["HUGGINGFACEHUB_API_TOKEN"])
+login(token=os.environ["HUGGINGFACEHUB_API_TOKEN"])
 
 logger.info("Loading embeddings")
 embeddings = HuggingFaceInstructEmbeddings(
-    model_name="hkunlp/instructor-base",
+    model_name="hkunlp/instructor-xl",
     model_kwargs={'device': 'cpu'},
     encode_kwargs={'normalize_embeddings': True}
 )
 logger.info("Embeddings loaded")
 logger.info("Loading LLM")
 llm = HuggingFaceHub(
-    repo_id="google/gemma-7b",
+    repo_id="HuggingFaceH4/zephyr-7b-beta",
+    task="text-generation",
     model_kwargs={
-    "max_new_tokens": 2048,
-    "top_k": 30,
-    "temperature": 1,
-    "repetition_penalty": 1.03,
-    "max_length": 16384,
-})
+        "max_new_tokens": 512,
+        "top_k": 30,
+        "temperature": 0.1,
+        "repetition_penalty": 1.03,
+    },
+)
 
 logger.info("LLM loaded")
 
-chat = ChatHuggingFace(llm=llm, token=hf_token)
+chat = ChatHuggingFace(llm=llm)
 
 logger.info("Chat loaded")
 
@@ -83,12 +86,15 @@ store = PGVector(
 logger.info("Store loaded")
 retriever = store.as_retriever()
 
-prompt_template = """As a FAQ Bot for our restaurant, you have the following information about our restaurant:
+prompt_template = """
+As a HR Assistant, you have access to detailed curriculum vitae information of our employees. Using this information, please provide the most suitable response to the user's inquiries about our employees' professional profiles. 
 
 {context}
 
-Please provide the most suitable response for the users question.
-Answer:"""
+Please respond with relevant data about the employee as per the user's query and respond all the questions in Catalan.
+Answer:
+"""
+
 
 prompt = PromptTemplate(
     template=prompt_template, input_variables=["context"]
@@ -107,6 +113,15 @@ def format_docs(docs):
         formatted_docs.append(formatted_doc)
     return '\n'.join(formatted_docs)
 
+def extract_last_assistant_message(full_response):
+    # Divide la respuesta en partes basada en el separador "</s>"
+    messages = full_response.split('</s>')
+    # Extrae el último mensaje no vacío
+    for message in reversed(messages):
+        return message.strip()
+    return "No response found from the assistant."  # Respuesta predeterminada si no se encuentra nada
+
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -122,11 +137,14 @@ async def llm_service(conversation_id: str, conversation: Conversation):
     query = conversation.conversation[-1].content
 
     docs = retriever.get_relevant_documents(query=query)
-    docs = format_docs(docs=docs)
+    logger.info(docs)
+    # docs = format_docs(docs=docs)
 
     prompt = system_message_prompt.format(context=docs)
     messages = [prompt] + create_messages(conversation=conversation.conversation)
 
     result = chat(messages)
 
-    return {"id": conversation_id, "reply": result.content}
+    last_response = extract_last_assistant_message(result.content)
+    
+    return {"id": conversation_id, "reply": last_response}

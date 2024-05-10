@@ -67,30 +67,40 @@ const App = () => {
     <div
       className="App flex flex-col items-center pt-6 min-h-screen bg-gray-900 text-sm"
       style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/background.jpg')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
     >
-      <h1 className="text-3xl font-bold mb-4 text-white">Restaurant Chatbot</h1>
+      <h1 className="text-3xl font-bold mb-4 text-white">CV Chatbot</h1>
       {conversation.conversation.length > 0 && (
         <div className="flex flex-col p-4 bg-white rounded shadow w-full max-w-md space-y-4">
           {conversation.conversation
             .filter((message) => message.role !== "system")
-            .map((message, index) => (
-              <div
-                key={index}
-                className={`${
-                  message.role === "user" ? "text-right" : "text-left"
-                }`}
-              >
-                <strong className="font-bold text-gray-900">
-                  {message.role}:
-                </strong>
-                <span className="text-gray-700">{message.content}</span>
-              </div>
-            ))}
+            .map((message, index) => {
+              let content = message.content;
+              if (message.role !== "user") {
+                console.log(content);
+                const firstSpaceIndex = content.indexOf('\n');
+                if (firstSpaceIndex !== -1) {
+                  content = content.slice(firstSpaceIndex + 1).trim();
+                }
+              }
+  
+              return (
+                <div
+                  key={index}
+                  className={`${
+                    message.role === "user" ? "text-right" : "text-left"
+                  }`}
+                >
+                  <strong className="font-bold text-gray-900">
+                    {message.role}:
+                  </strong>
+                  <pre className="text-gray-700 whitespace-pre-wrap break-words overflow-hidden small-text ">{content}</pre>                
+                </div>
+              );
+            })}
         </div>
       )}
       <div className="flex flex-row w-full max-w-md mt-4">
@@ -128,7 +138,7 @@ const App = () => {
         New Session
       </button>
     </div>
-  );
-};
-
+    );
+}
+  
 export default App;
