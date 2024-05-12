@@ -1,0 +1,43 @@
+<!-- chat.component.html -->
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-icon card-header-primary">
+            <div class="card-icon">
+              <i class="material-icons">chat</i>
+            </div>
+            <h4 class="card-title">Chat</h4>
+          </div>
+          <div class="card-body">
+            <div class="messages">
+              <div *ngFor="let message of conversation" class="message">
+                <span class="text-muted"><strong>{{ message.role }}:</strong></span>
+                <p>{{ message.content }}</p>
+              </div>
+            </div>
+            <div class="input-group">
+              <input type="text" class="form-control" [(ngModel)]="userMessage" (keydown.enter)="handleSubmit()" placeholder="Type your message..." [disabled]="isLoading">
+              <div class="input-group-append">
+                <button class="btn btn-primary btn-fab btn-round" (click)="handleSubmit()" [disabled]="isLoading">
+                  <i class="material-icons">send</i>
+                </button>
+                <button class="btn btn-secondary btn-fab btn-round" (click)="handleNewSession()" [disabled]="isLoading">
+                  <i class="material-icons">refresh</i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <!-- Modificar aquí para mostrar 'Loading...' cuando isLoading es true -->
+              <i class="material-icons">{{ isLoading ? 'hourglass_empty' : 'access_time' }}</i>
+              {{ isLoading ? 'Loading...' : 'last active 1 min ago' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<!-- upload.component.html -->
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-icon card-header-primary">
+            <div class="card-icon">
+              <i class="material-icons">cloud_upload</i>
+            </div>
+            <h4 class="card-title">Upload PDF</h4>
+          </div>
+          <div class="card-body">
+            <div class="drop-list" 
+                 (dragover)="onDragOver($event)" 
+                 (drop)="onDrop($event)"
+                 (click)="fileInput.click()">
+              <p>Drag and drop files here or click to select files</p>
+              <input type="file" #fileInput (change)="handleFileInput($event.target.files)" multiple hidden>
+            </div>
+            <div class="uploaded-files">
+              <div *ngFor="let file of files" class="card file-card">
+                <div class="card-body">
+                  <p>{{ file.name }}</p>
+                  <p class="card-text">{{ file.size | fileSize }}</p>
+                </div>
+              </div>
+            </div>
+            <button mat-raised-button color="primary" (click)="uploadFiles()" class="btn btn-fill">Upload</button>
+          </div>
+          <div class="card-footer">
+            <div class="stats">
+              <i class="material-icons">update</i> Ready to upload your selected PDF documents
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

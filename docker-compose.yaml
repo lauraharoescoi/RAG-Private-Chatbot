@@ -50,6 +50,24 @@ services:
       - ./frontend:/app
       - /app/node_modules
 
+  frontend-angular:
+    container_name: frontend-angular
+    build: ./frontend-angular
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend-angular:/app
+      - /app/node_modules
+
+  material-dashboard:
+    container_name: material-dashboard
+    build: ./material-dashboard
+    ports:
+      - "4201:4200"
+    volumes:
+      - ./material-dashboard:/app
+      - /app/node_modules
+
 volumes:
   redis_data:
   redis2_data:

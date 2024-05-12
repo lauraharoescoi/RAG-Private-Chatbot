@@ -1,0 +1,12 @@
+
+
+.card-body {
+  flex-grow: 1;  // Permite que el cuerpo de la tarjeta crezca y se contraiga según el contenido
+  overflow-y: auto;  // Activa el desplazamiento vertical si el contenido excede la altura disponible
+}
+
+.messages {
+  height: 100%;  // Ajusta la altura de la sección de mensajes al 100% del contenedor padre
+  max-height: calc(100vh - 400px);  // Ajusta este valor basado en la altura total de los otros componentes dentro de la tarjeta
+  overflow-y: auto;  // Habilita el desplazamiento dentro de la sección de mensajes
+}
