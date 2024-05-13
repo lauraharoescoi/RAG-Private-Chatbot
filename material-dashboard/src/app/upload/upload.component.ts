@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-upload',
@@ -8,13 +8,8 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 export class UploadComponent {
   files: File[] = [];
 
-  constructor(private changeDetector: ChangeDetectorRef) {}
-
   handleFileInput(files: FileList) {
-    Array.from(files).forEach(file => {
-      this.files.push(file);
-    });
-    this.changeDetector.markForCheck();  // Trigger change detection manually
+    Array.from(files).forEach(file => this.files.push(file));
   }
 
   onDragOver(event: DragEvent) {
@@ -31,5 +26,10 @@ export class UploadComponent {
 
   uploadFiles() {
     console.log('Files to upload:', this.files);
+    // Implement your upload logic here
+  }
+
+  removeFile(index: number): void {
+    this.files.splice(index, 1); // Removes the file from the array
   }
 }

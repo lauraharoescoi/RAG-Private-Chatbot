@@ -12,13 +12,21 @@
           </div>
           <div class="card-body">
             <div class="messages">
-              <div *ngFor="let message of conversation" class="message">
-                <span class="text-muted"><strong>{{ message.role }}:</strong></span>
-                <p>{{ message.content }}</p>
+              <div *ngFor="let message of conversation" 
+                   [ngClass]="{'assistant': message.role === 'assistant', 'user': message.role === 'user'}" 
+                   class="message card">
+                <div class="card-header">
+                  <i class="material-icons">{{ message.role === 'user' ? 'person' : 'android' }}</i>
+                  <strong>{{ message.role }}</strong>
+                </div>
+                <div class="card-body-message">
+                  <p>{{ message.content }}</p>
+                </div>
               </div>
             </div>
             <div class="input-group">
-              <input type="text" class="form-control" [(ngModel)]="userMessage" (keydown.enter)="handleSubmit()" placeholder="Type your message..." [disabled]="isLoading">
+              <input type="text" class="form-control" [(ngModel)]="userMessage" 
+                     (keydown.enter)="handleSubmit()" placeholder="Type your message..." [disabled]="isLoading">
               <div class="input-group-append">
                 <button class="btn btn-primary btn-fab btn-round" (click)="handleSubmit()" [disabled]="isLoading">
                   <i class="material-icons">send</i>
@@ -31,7 +39,6 @@
           </div>
           <div class="card-footer">
             <div class="stats">
-              <!-- Modificar aquí para mostrar 'Loading...' cuando isLoading es true -->
               <i class="material-icons">{{ isLoading ? 'hourglass_empty' : 'access_time' }}</i>
               {{ isLoading ? 'Loading...' : 'last active 1 min ago' }}
             </div>

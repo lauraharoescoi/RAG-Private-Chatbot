@@ -19,7 +19,6 @@ export class ChatComponent implements OnInit {
   ngOnInit() {
     this.conversationId = localStorage.getItem('conversationId') || this.generateConversationId();
     this.fetchConversation();
-    this.conversation = [{ role: 'assistant', content: 'Hi, how can I help?' }]; 
   }
 
   generateConversationId(): string {
@@ -30,15 +29,23 @@ export class ChatComponent implements OnInit {
 
   fetchConversation() {
     this.conversationService.getConversation(this.conversationId).subscribe((data: Conversation) => {
-        if (data && data.conversation) {
-            this.conversation = data.conversation;
-        } else {
-            console.log('No conversation data returned:', data);
-            this.conversation = []; // Set to an empty array to avoid undefined errors
-        }
+      if (data && data.conversation) {
+        this.conversation = data.conversation
+          .filter(msg => msg.role === 'user' || msg.role === 'assistant')
+          .map(msg => {
+            console.log('msg', msg);
+            if (msg.role === 'assistant') {
+              msg.content = msg.content.substring(msg.content.indexOf('\n') + 1);
+            }
+            return msg;
+          });
+      } else {
+        console.log('No conversation data returned:', data);
+        this.conversation = [];
+      }
     }, error => {
-        console.error('Failed to fetch conversation:', error);
-        this.conversation = []; // Set to an empty array to ensure the UI doesn't break
+      console.error('Failed to fetch conversation:', error);
+      this.conversation = [];
     });
   }
 

@@ -1,13 +1,51 @@
-/* upload.component.css */
 .drop-list {
-    border: 2px dashed #ccc;
-    padding: 20px;
-    text-align: center;
-    background: #fafafa;
-    cursor: pointer;
-  }
-  
-  .uploaded-files .file-card {
-    margin-top: 10px;
-  }
-  
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  background: #fafafa;
+  cursor: pointer;
+}
+
+.uploaded-files .file-card {
+  margin-top: 10px;
+}
+
+.card-body.d-flex {
+  display: flex;
+  align-items: center; /* Alinea verticalmente los ítems al centro */
+}
+
+.card-body .file-details {
+  flex-grow: 1; /* Ocupa todo el espacio horizontal disponible */
+  margin-right: 10px; /* Espaciado entre el texto y el botón */
+}
+
+.card-body button {
+  margin-left: auto; /* Alinea el botón a la derecha */
+}
+
+.delete-button {
+  background-color: #f44336; /* Rojo */
+  color: white;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  border: none; /* Elimina cualquier borde */
+  outline: none; /* Elimina el borde del enfoque */
+}
+
+.delete-button:hover {
+  background-color: #d32f2f; /* Rojo más oscuro al pasar el mouse */
+}
+
+.delete-button .material-icons {
+  font-size: 20px;
+}
+
+.main-content {
+  margin-top: 30px;
+}
