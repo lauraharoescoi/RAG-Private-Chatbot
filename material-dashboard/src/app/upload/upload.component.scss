@@ -49,3 +49,30 @@
 .main-content {
   margin-top: 30px;
 }
+
+.btn-fill {
+  background-color: #942BAE;
+  color: white;
+  
+  &:hover {
+    background-color: darken(#942BAE, 10%);
+  }
+}
+
+.disabled-button {
+  pointer-events: none; /* Desactiva cualquier interacción del usuario */
+  cursor: not-allowed; /* Cambia el cursor a 'no permitido' */
+  opacity: 0.5; /* Reduce la opacidad para que se vea deshabilitado */
+}
+
+.disabled-button:hover {
+  background-color: inherit; /* Mantiene el color de fondo original en hover */
+}
+
+
+
+
+
+
+
+

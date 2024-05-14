@@ -1,0 +1,37 @@
+/* sidebar.component.css */
+.subnav {
+  padding-left: 20px;
+}
+
+.selected-conversation {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.conversation-option-selected {
+  background-color: #e0e0e0; /* Color de fondo para el estado hovered */
+  color: #000; /* Color del texto para el estado hovered */
+}
+
+.subnav {
+  padding-left: 20px;
+}
+
+.selected-conversation {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.conversation-option-selected {
+  background-color: #e0e0e0; /* Color de fondo para el estado hovered */
+  color: #000; /* Color del texto para el estado hovered */
+}
+
+.dropdown-arrow {
+  float: right;
+  transition: transform 0.3s;
+}
+
+.dropdown-arrow.rotate {
+  transform: rotate(90deg);
+}

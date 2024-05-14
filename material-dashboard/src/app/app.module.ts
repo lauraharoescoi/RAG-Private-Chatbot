@@ -5,6 +5,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 import { AppComponent } from './app.component';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { BrowserModule } from '@angular/platform-browser';
@@ -23,6 +26,8 @@ import { FileSizePipe } from './fileSize.pipe';
     ComponentsModule,
     RouterModule,
     AppRoutingModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule
   ],
   declarations: [
     AppComponent,

@@ -1,8 +1,9 @@
+<!-- upload.component.html -->
 <div class="main-content">
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <div class="card">
+        <div class="card" [class.disabled]="uploading">
           <div class="card-header card-header-icon card-header-primary">
             <div class="card-icon">
               <i class="material-icons">cloud_upload</i>
@@ -13,7 +14,8 @@
             <div class="drop-list" 
                  (dragover)="onDragOver($event)" 
                  (drop)="onDrop($event)"
-                 (click)="fileInput.click()">
+                 (click)="!uploading && fileInput.click()"
+                 [ngClass]="{'disabled-button': uploading}">
               <p>Drag and drop files here or click to select files</p>
               <input type="file" #fileInput (change)="handleFileInput($event.target.files)" multiple hidden>
             </div>
@@ -21,17 +23,18 @@
               <div *ngFor="let file of files; let i = index" class="card file-card">
                 <div class="card-body d-flex align-items-center">
                   <p class="file-details flex-grow-1 mb-0">{{ file.name }} ({{ file.size | fileSize }})</p>
-                  <button mat-icon-button (click)="removeFile(i)" aria-label="Remove file" class="delete-button">
+                  <button mat-icon-button (click)="removeFile(i)" aria-label="Remove file" class="delete-button" [disabled]="uploading" [ngClass]="{'disabled-button': uploading}">
                     <i class="material-icons">delete</i>
                   </button>
                 </div>
               </div>
             </div>
-            <button mat-raised-button color="primary" (click)="uploadFiles()" class="btn btn-fill">Upload</button>
           </div>
-          <div class="card-footer">
-            <div class="stats">
-              <i class="material-icons">update</i> Ready to upload your selected PDF documents
+          <div class="card-footer d-flex">
+            <button mat-raised-button color="primary" (click)="uploadFiles()" class="btn btn-fill" [disabled]="uploading">Upload</button>
+            <div class="stats d-flex align-items-center" *ngIf="uploading">
+              <mat-progress-spinner [diameter]="30" mode="indeterminate" ></mat-progress-spinner>
+              <span class="ml-2">Uploading...</span>
             </div>
           </div>
         </div>

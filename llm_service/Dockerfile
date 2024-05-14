@@ -6,6 +6,7 @@ COPY . /app
 
 RUN pip install fastapi uvicorn redis requests langchain==0.1.10 python-dotenv postgres psycopg2-binary pgvector pydantic
 RUN pip install langchain-community==0.0.25 sentence_transformers==2.2.2 InstructorEmbedding==1.0.1
+RUN pip install PyPDF2
 
 # install postgresql client
 RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*

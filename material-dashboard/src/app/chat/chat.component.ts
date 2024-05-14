@@ -1,7 +1,8 @@
+// chat.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ConversationService } from '../services/conversation.service';
+import { ChatService } from '../services/chat.service';
 import { Message, Conversation } from '../models';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-chat',
@@ -14,11 +15,14 @@ export class ChatComponent implements OnInit {
   isLoading: boolean = false;
   conversationId: string = '';
 
-  constructor(private conversationService: ConversationService) {}
+  constructor(private conversationService: ConversationService, private chatService: ChatService) {}
 
   ngOnInit() {
     this.conversationId = localStorage.getItem('conversationId') || this.generateConversationId();
     this.fetchConversation();
+    this.chatService.conversationSelected$.subscribe(id => {
+      this.loadConversation(id);
+    });
   }
 
   generateConversationId(): string {
@@ -33,44 +37,42 @@ export class ChatComponent implements OnInit {
         this.conversation = data.conversation
           .filter(msg => msg.role === 'user' || msg.role === 'assistant')
           .map(msg => {
-            console.log('msg', msg);
             if (msg.role === 'assistant') {
               msg.content = msg.content.substring(msg.content.indexOf('\n') + 1);
             }
             return msg;
           });
       } else {
-        console.log('No conversation data returned:', data);
         this.conversation = [];
       }
     }, error => {
-      console.error('Failed to fetch conversation:', error);
       this.conversation = [];
     });
   }
 
   handleNewSession() {
     localStorage.removeItem('conversationId');
-    this.conversation = []; // Clear current conversation
+    this.conversation = [];
     this.conversationId = this.generateConversationId();
-    this.fetchConversation(); // Optional: Attempt to fetch a new conversation if needed
+    this.fetchConversation();
   }
 
-
   async handleSubmit() {
-    console.log('converasation', this.conversation);
     this.isLoading = true;
     const newConversation = [...this.conversation, { role: 'user', content: this.userMessage }];
-    
+
     this.conversationService.postConversation(this.conversationId, newConversation).subscribe((data: Conversation) => {
       this.conversation = data.conversation;
       this.userMessage = '';
       this.isLoading = false;
     }, error => {
-      console.error('Error updating conversation:', error);
       this.isLoading = false;
     });
   }
-  
-}
 
+  loadConversation(id: string) {
+    this.conversationId = id;
+    localStorage.setItem('conversationId', id);
+    this.fetchConversation();
+  }
+}

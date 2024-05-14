@@ -7,59 +7,41 @@
     </a>
 </div>
 <div class="sidebar-wrapper">
-  <div *ngIf="isMobileMenu()">
-    <form class="navbar-form">
-      <span class="bmd-form-group">
-        <div class="input-group no-border">
-          <input type="text" value="" class="form-control" placeholder="Search...">
-          <button mat-raised-button type="submit" class="btn btn-white btn-round btn-just-icon">
-            <i class="material-icons">search</i>
-            <div class="ripple-container"></div>
-          </button>
-        </div>
-      </span>
-    </form>
-    <ul class="nav navbar-nav nav-mobile-menu">
-        <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0)">
-                <i class="material-icons">dashboard</i>
-                <p>
-                    <span class="d-lg-none d-md-block">Stats</span>
-                </p>
-            </a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link" href="javascript:void(0)" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="material-icons">notifications</i>
-                <span class="notification">5</span>
-                <p>
-                    <span class="d-lg-none d-md-block">Some Actions</span>
-                </p>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">Mike John responded to your email</a>
-                <a class="dropdown-item" href="#">You have 5 new tasks</a>
-                <a class="dropdown-item" href="#">You're now friend with Andrew</a>
-                <a class="dropdown-item" href="#">Another Notification</a>
-                <a class="dropdown-item" href="#">Another One</a>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0)">
-                <i class="material-icons">person</i>
-                <p>
-                    <span class="d-lg-none d-md-block">Account</span>
-                </p>
-            </a>
-        </li>
-    </ul>
-  </div>
+    <div *ngIf="isMobileMenu()">
+        <ul class="nav navbar-nav nav-mobile-menu">
+        </ul>
+    </div>
     <ul class="nav">
         <li routerLinkActive="active" *ngFor="let menuItem of menuItems" class="{{menuItem.class}} nav-item">
-            <a class="nav-link" [routerLink]="[menuItem.path]">
+            <a class="nav-link" [routerLink]="[menuItem.path]" (click)="clickSubBtn($event, 'chat_nav', 'dropdown1')">
                 <i class="material-icons">{{menuItem.icon}}</i>
-                <p>{{menuItem.title}}</p>
+                <span>{{menuItem.title}}</span>
+                <i class="material-icons dropdown-arrow dropdown1" *ngIf="menuItem.dropdown" style="float: right; margin-right: -5px;">keyboard_arrow_down</i>
             </a>
+            <ul class="nav subnav chat_nav" *ngIf="menuItem.path === '/chat' && isChatRoute" style="display: none;">
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)" (click)="clickSubBtn($event, 'conv_nav', 'dropdown2');">
+                        <i class="material-icons">list</i>
+                        <span>Conversations</span>
+                        <i class="material-icons dropdown-arrow dropdown2" *ngIf="conversationIds.length > 0" style="float: right; margin-right: -5px;">keyboard_arrow_down</i>
+                    </a>
+                    <ul class="nav subnav conv_nav" *ngIf="conversationIds.length > 0" style="display: none;">
+                        <li class="nav-item" *ngFor="let id of conversationIds">
+                            <a class="nav-link" href="javascript:void(0)" (click)="selectConversation(id)"
+                               [ngClass]="{'selected-conversation': selectedConversationId === id}">
+                                <i class="material-icons">chat</i>
+                                <p>{{ id }}</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:void(0)" (click)="createNewConversation()">
+                        <i class="material-icons">add</i>
+                        <p>New Chat</p>
+                    </a>
+                </li>
+            </ul>
         </li>
     </ul>
 </div>
