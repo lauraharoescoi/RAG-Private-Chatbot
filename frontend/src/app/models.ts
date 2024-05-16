@@ -6,6 +6,7 @@ export interface Message {
 }
   
 export interface Conversation {
+    name: string;
     conversation: Message[];
 }
   

@@ -20,8 +20,12 @@ export class ConversationService {
     return this.http.post<Conversation>(`${this.apiUrl}/backend/${conversationId}`, { conversation });
   }
 
-  getConversationIds(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/conversations`);
+  updateConversationName(conversationId: string, name: string): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/name/${conversationId}`, { name });
+  }
+
+  getConversations(): Observable<{conversation_id: string, name: string}[]> {
+    return this.http.get<{conversation_id: string, name: string}[]>(`${this.apiUrl}/conversations`);
   }
 
   uploadFile(file: File): Observable<HttpEvent<any>> {
@@ -35,5 +39,4 @@ export class ConversationService {
 
     return this.http.request(req);
   }
-
 }

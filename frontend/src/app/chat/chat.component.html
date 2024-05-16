@@ -1,4 +1,3 @@
-<!-- chat.component.html -->
 <div class="main-content">
   <div class="container-fluid">
     <div class="row">
@@ -8,7 +7,14 @@
             <div class="card-icon">
               <i class="material-icons">chat</i>
             </div>
-            <h4 class="card-title">Chat</h4>
+            <h4 class="card-title">
+              <span *ngIf="!isEditingName">{{ conversationName }}</span>
+              <div *ngIf="isEditingName" class="edit-container">
+                <input [(ngModel)]="conversationName" (blur)="saveName()" (keydown.enter)="saveName()" />
+                <i class="material-icons check-icon" (click)="saveName()">check</i>
+              </div>
+              <i class="material-icons edit-icon" *ngIf="!isEditingName" (click)="editName()">edit</i>
+            </h4>
           </div>
           <div class="card-body">
             <div class="messages">

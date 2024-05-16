@@ -1,4 +1,3 @@
-// chat.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ConversationService } from '../services/conversation.service';
 import { ChatService } from '../services/chat.service';
@@ -14,6 +13,8 @@ export class ChatComponent implements OnInit {
   userMessage: string = '';
   isLoading: boolean = false;
   conversationId: string = '';
+  conversationName: string = 'New chat';
+  isEditingName: boolean = false;
 
   constructor(private conversationService: ConversationService, private chatService: ChatService) {}
 
@@ -34,6 +35,7 @@ export class ChatComponent implements OnInit {
   fetchConversation() {
     this.conversationService.getConversation(this.conversationId).subscribe((data: Conversation) => {
       if (data && data.conversation) {
+        this.conversationName = data.name || 'New chat';
         this.conversation = data.conversation
           .filter(msg => msg.role === 'user' || msg.role === 'assistant')
           .map(msg => {
@@ -54,12 +56,16 @@ export class ChatComponent implements OnInit {
     localStorage.removeItem('conversationId');
     this.conversation = [];
     this.conversationId = this.generateConversationId();
+    this.conversationName = 'New chat';
     this.fetchConversation();
   }
 
   async handleSubmit() {
+    if (!this.userMessage.trim()) return;
+    
     this.isLoading = true;
-    const newConversation = [...this.conversation, { role: 'user', content: this.userMessage }];
+    const newMessage = { role: 'user', content: this.userMessage };
+    const newConversation = [...this.conversation, newMessage];
 
     this.conversationService.postConversation(this.conversationId, newConversation).subscribe((data: Conversation) => {
       this.conversation = data.conversation;
@@ -74,5 +80,14 @@ export class ChatComponent implements OnInit {
     this.conversationId = id;
     localStorage.setItem('conversationId', id);
     this.fetchConversation();
+  }
+
+  editName() {
+    this.isEditingName = true;
+  }
+
+  saveName() {
+    this.isEditingName = false;
+    this.conversationService.updateConversationName(this.conversationId, this.conversationName).subscribe();
   }
 }

@@ -23,14 +23,14 @@
                     <a class="nav-link" href="javascript:void(0)" (click)="clickSubBtn($event, 'conv_nav', 'dropdown2');">
                         <i class="material-icons">list</i>
                         <span>Conversations</span>
-                        <i class="material-icons dropdown-arrow dropdown2" *ngIf="conversationIds.length > 0" style="float: right; margin-right: -5px;">keyboard_arrow_down</i>
+                        <i class="material-icons dropdown-arrow dropdown2" *ngIf="conversations.length > 0" style="float: right; margin-right: -5px;">keyboard_arrow_down</i>
                     </a>
-                    <ul class="nav subnav conv_nav" *ngIf="conversationIds.length > 0" style="display: none;">
-                        <li class="nav-item" *ngFor="let id of conversationIds">
-                            <a class="nav-link" href="javascript:void(0)" (click)="selectConversation(id)"
-                               [ngClass]="{'selected-conversation': selectedConversationId === id}">
+                    <ul class="nav subnav conv_nav" *ngIf="conversations.length > 0" style="display: none;">
+                        <li class="nav-item" *ngFor="let conversation of conversations">
+                            <a class="nav-link" href="javascript:void(0)" (click)="selectConversation(conversation.conversation_id)"
+                               [ngClass]="{'selected-conversation': selectedConversationId === conversation.conversation_id}">
                                 <i class="material-icons">chat</i>
-                                <p>{{ id }}</p>
+                                <p>{{ conversation.name }}</p>
                             </a>
                         </li>
                     </ul>
