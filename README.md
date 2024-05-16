@@ -1,4 +1,4 @@
-# Private Company Chatbot
+# Insdo Chatbot
 
 This repository contains the code for a private chatbot developed by Insdo SL. The chatbot uses a language model (LLM) with LangChain to answer questions about employees based on their resumes and other stored information.
 
