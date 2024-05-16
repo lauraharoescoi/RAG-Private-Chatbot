@@ -1,13 +1,11 @@
 from typing import List, Optional
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pymongo import MongoClient, ASCENDING
 from bson import ObjectId
 import requests
-import json
 import logging
-import base64
 import os
 
 logging.basicConfig(level=logging.INFO)
@@ -40,11 +38,7 @@ class Message(BaseModel):
 
 class Conversation(BaseModel):
     conversation: List[Message]
-
-def conversation_to_dict(conversation):
-    if "_id" in conversation:
-        conversation["_id"] = str(conversation["_id"])
-    return conversation
+    name: str = "New conversation"  # Valor predeterminado para el nombre
 
 def convert_object_ids(document):
     if isinstance(document, dict):
@@ -70,20 +64,37 @@ async def backend(conversation_id: str, conversation: Conversation):
     logger.info(f"Sending Conversation with ID {conversation_id} to LLM service")
     existing_conversation = conversations_collection.find_one({"conversation_id": conversation_id})
     if not existing_conversation:
-        existing_conversation = {"conversation_id": conversation_id, "conversation": [{"role": "system", "content": "You are a helpful assistant."}]}
+        # Incluir la primera pregunta del usuario en la nueva conversación
+        user_message = conversation.dict()["conversation"][-1]
+        existing_conversation = {
+            "conversation_id": conversation_id,
+            "conversation": [
+                {"role": "system", "content": "You are a helpful assistant."},
+                user_message
+            ],
+            "name": conversation.name if conversation.name else "New conversation"
+        }
         conversations_collection.insert_one(existing_conversation)
+    else:
+        existing_conversation["conversation"].append(conversation.dict()["conversation"][-1])
 
-    existing_conversation["conversation"].append(conversation.dict()["conversation"][-1])
-
+    # Enviar la conversación al servicio LLM
     response = requests.post(f"http://llm_service:80/llm_service/{conversation_id}", json=convert_object_ids(existing_conversation))
     response.raise_for_status()
     assistant_message = response.json()["reply"]
 
     existing_conversation["conversation"].append({"role": "assistant", "content": assistant_message})
-
     conversations_collection.update_one({"conversation_id": conversation_id}, {"$set": {"conversation": existing_conversation["conversation"]}})
 
     return convert_object_ids(existing_conversation)
+
+@app.patch("/name/{conversation_id}")
+async def update_conversation_name(conversation_id: str, name: dict = Body(...)):
+    logger.info(f"Updating name of conversation with ID {conversation_id} to {name['name']}")
+    result = conversations_collection.update_one({"conversation_id": conversation_id}, {"$set": {"name": name['name']}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    return {"message": "Conversation name updated successfully"}
 
 @app.post("/upload_files")
 async def upload_files(file: UploadFile = File(...)):
@@ -100,8 +111,8 @@ async def upload_files(file: UploadFile = File(...)):
 async def get_conversations():
     try:
         conversations = conversations_collection.find().limit(10)
-        conversation_ids = [conv["conversation_id"] for conv in conversations]
-        return conversation_ids
+        conversation_list = [{"conversation_id": conv["conversation_id"], "name": conv.get("name", "New conversation")} for conv in conversations]
+        return conversation_list
     except Exception as e:
-        logger.error(f"Failed to retrieve conversation IDs: {str(e)}")
+        logger.error(f"Failed to retrieve conversations: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
