@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.routing import APIRoute
 import logging
 from routes import conversation, file_upload
 
@@ -17,6 +18,12 @@ app.add_middleware(
 
 app.include_router(conversation.router, prefix="/conversation", tags=["conversation"])
 app.include_router(file_upload.router, prefix="/files", tags=["file_upload"])
+
+for route in app.routes:
+    if isinstance(route, APIRoute):
+        route.operation_id = route.tags[-1].replace(
+            " ", "").lower() if len(route.tags) > 0 else ""
+        route.operation_id += "_" + route.name
 
 if __name__ == "__main__":
     import uvicorn

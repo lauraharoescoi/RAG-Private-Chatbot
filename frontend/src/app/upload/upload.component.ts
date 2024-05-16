@@ -2,6 +2,7 @@
 import { Component } from '@angular/core';
 import { HttpEventType } from '@angular/common/http';
 import { ConversationService } from '../services/conversation.service';
+import { FilesService } from '../services/files.service';
 import { MatSnackBar } from '@angular/material/snack-bar';  
 import { NotificationService } from '../services/notifications.service'; // Import the new service
 
@@ -16,7 +17,8 @@ export class UploadComponent {
 
   constructor(private conversationService: ConversationService, 
               private snackBar: MatSnackBar, 
-              private notificationService: NotificationService) {}
+              private notificationService: NotificationService,
+              private filesService: FilesService) {}
 
   handleFileInput(files: FileList) {
     Array.from(files).forEach(file => {
@@ -56,7 +58,7 @@ export class UploadComponent {
   
   uploadFile(file: File): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.conversationService.uploadFile(file).subscribe(event => {
+      this.filesService.uploadFile(file).subscribe(event => {
         if (event.type === HttpEventType.Response) {
           this.notificationService.showNotification('top', 'right', `File '${file.name}' uploaded successfully.`, 'success');
           const index = this.files.indexOf(file);
