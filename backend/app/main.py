@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 import logging
-from routes import conversation, file_upload
+from app.routes import conversation, file_upload
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

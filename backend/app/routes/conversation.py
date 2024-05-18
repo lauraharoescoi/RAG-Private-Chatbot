@@ -3,9 +3,9 @@ import logging
 from pymongo import MongoClient
 import requests
 from bson import ObjectId
-from models import Conversation
-from database import conversations_collection
-from utils import convert_object_ids
+from app.models import Conversation
+from app.database import conversations_collection
+from app.utils import convert_object_ids
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -37,7 +37,7 @@ async def post_conversation(conversation_id: str, conversation: Conversation):
     else:
         existing_conversation["conversation"].append(conversation.dict()["conversation"][-1])
 
-    response = requests.post(f"http://llm_service:80/llm_service/{conversation_id}", json=convert_object_ids(existing_conversation))
+    response = requests.post(f"http://llm_service:80/conversation/{conversation_id}", json=convert_object_ids(existing_conversation))
     response.raise_for_status()
     assistant_message = response.json()["reply"]
 
@@ -57,7 +57,7 @@ async def update_conversation_name(conversation_id: str, name: dict = Body(...))
 @router.get("/")
 async def get_conversations():
     try:
-        conversations = conversations_collection.find().limit(10)
+        conversations = conversations_collection.find()
         conversation_list = [{"conversation_id": conv["conversation_id"], "name": conv.get("name", "New conversation")} for conv in conversations]
         return conversation_list
     except Exception as e:

@@ -6,6 +6,8 @@ services:
       - "5433:5432"
     volumes:
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
@@ -54,3 +56,4 @@ services:
 
 volumes:
   mongo_data:
+  postgres_data:

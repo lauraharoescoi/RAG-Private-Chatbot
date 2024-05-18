@@ -9,6 +9,8 @@ COPY requirements.txt /app/requirements.txt
 # Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN pip install langserve pydantic==2.6.3 sse_starlette python-multipart
+
 # Copy the rest of the application code into the image
 COPY . /app
 
