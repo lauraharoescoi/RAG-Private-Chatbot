@@ -3,9 +3,9 @@ import logging
 from pymongo import MongoClient
 import requests
 from bson import ObjectId
-from models import Conversation
-from database import conversations_collection
-from utils import convert_object_ids
+from app.models import Conversation
+from app.database import conversations_collection
+from app.utils import convert_object_ids
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
