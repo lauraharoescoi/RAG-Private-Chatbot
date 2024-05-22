@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from app.models import Conversation
 from app.utils import create_messages, extract_last_assistant_message
 from langchain.prompts import ChatPromptTemplate
-from app.config import chat, retriever
+from app.config import embeddings, llm, chat, retriever
 from langserve import add_routes
 from langchain.schema import HumanMessage, AIMessage, SystemMessage
 
@@ -13,13 +13,12 @@ As an HR Assistant, you have access to detailed curriculum vitae information of 
 
 {context}
 
-Please respond with relevant data about the employee as per the user's query and respond to all the questions. If the information is not available in the provided context, respond with "No information available."
+Please respond with relevant data about the employee as per the user's query and respond to all the questions in Catalan. If the information is not available in the provided context, respond with "No information available."
 
 Answer:
 """
 
 prompt = ChatPromptTemplate.from_template(prompt_template)
-print("Prompt:", prompt)  # Para depuración
 
 # Add routes using LangServe
 add_routes(router, prompt, path="/llm_service")
@@ -37,8 +36,8 @@ def convert_to_chat_message(role: str, content: str):
 @router.post("/conversation/{conversation_id}")
 async def llm_service_custom(conversation_id: str, conversation: Conversation):
     query = conversation.conversation[-1].content
-    docs = retriever.get_relevant_documents(query=query)
-    print("Initial docs retrieved:", docs)  # Para depuración
+    docs = retriever.invoke(input=query)
+    print("Initial docs retrieved:", docs)  # For debugging
 
     # Check if any documents were found
     if not docs:
@@ -46,7 +45,7 @@ async def llm_service_custom(conversation_id: str, conversation: Conversation):
 
     # Collect all unique custom_ids from the retrieved docs
     custom_ids = {doc.metadata.get("custom_id") for doc in docs if "custom_id" in doc.metadata}
-    print("Custom IDs:", custom_ids)  # Para depuración
+    print("Custom IDs:", custom_ids)  # For debugging
 
     # Check if any custom_ids were found
     if not custom_ids:
@@ -55,12 +54,12 @@ async def llm_service_custom(conversation_id: str, conversation: Conversation):
     # Retrieve all chunks associated with the found custom_ids
     all_docs = []
     for custom_id in custom_ids:
-        related_docs = retriever.get_relevant_documents(query="", search_kwargs={"filter": {"custom_id": custom_id}})
-        print("Docs for custom_id", custom_id, ":", related_docs)  # Para depuración
+        related_docs = retriever.invoke(input="", search_kwargs={"filter": {"custom_id": custom_id}})
+        print("Docs for custom_id", custom_id, ":", related_docs)  # For debugging
         all_docs.extend(related_docs)
     
-    context = "\n".join([doc.metadata.get('source', '') for doc in all_docs if 'source' in doc.metadata])
-    print("Context:", context)  # Para depuración
+    context = "\n".join([doc.page_content for doc in all_docs])
+    print("Context:", context)  # For debugging
     prompt_text = prompt.format(context=context)
     messages = [convert_to_chat_message("system", prompt_text)] + create_messages(conversation=conversation.conversation)
     result = chat(messages)

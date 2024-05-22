@@ -11,3 +11,8 @@ langchain-community==0.0.25
 sentence-transformers==2.2.2
 InstructorEmbedding==1.0.1
 PyPDF2==3.0.1
+langserve 
+pydantic==2.6.3 
+sse_starlette 
+python-multipart
+pymupdf

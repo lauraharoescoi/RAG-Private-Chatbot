@@ -5,9 +5,7 @@ from langchain_community.embeddings import HuggingFaceInstructEmbeddings
 from langchain_community.llms import HuggingFaceHub
 from langchain_community.chat_models.huggingface import ChatHuggingFace
 from langchain.vectorstores.pgvector import PGVector
-from langchain.storage import InMemoryStore
-from langchain.retrievers import ParentDocumentRetriever
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from app.custom_retriever import CustomRetriever
 
 load_dotenv(find_dotenv())
 
@@ -40,22 +38,6 @@ store = PGVector(
     collection_name=COLLECTION_NAME,
     connection_string=CONNECTION_STRING,
     embedding_function=embeddings,
-)
-
-# InMemoryStore for parent documents
-byte_store = InMemoryStore()
-
-# Text splitters for parent and child documents with larger chunk sizes
-parent_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
-child_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-
-# Create ParentDocumentRetriever
-loader = ParentDocumentRetriever(
-    vectorstore=store,
-    docstore=byte_store,
-    parent_id_key="custom_id",
-    child_splitter=child_splitter,
-    parent_splitter=parent_splitter,
 )
 
 retriever = store.as_retriever()
