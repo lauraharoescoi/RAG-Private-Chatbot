@@ -7,6 +7,7 @@ from langchain.schema import (
     SystemMessage
 )
 import tempfile
+import re
 
 ROLE_CLASS_MAP = {
     "assistant": AIMessage,
@@ -17,11 +18,15 @@ ROLE_CLASS_MAP = {
 def create_messages(conversation):
     return [ROLE_CLASS_MAP[message.role](content=message.content) for message in conversation]
 
+import re
+
 def extract_last_assistant_message(full_response):
-    messages = full_response.split('</s>')
-    for message in reversed(messages):
-        return message.strip()
+    # Buscar todas las ocurrencias de "Assistant:" o "AI:" con el contenido hasta el siguiente "Assistant:" o "AI:" o el final del texto
+    matches = re.findall(r"(?:Assistant|AI): (.*?)(?=\n(?:Assistant|AI):|\Z)", full_response, re.DOTALL)
+    if matches:
+        return matches[-1].strip()
     return "No response found from the assistant."
+
 
 def get_text_chunks(text):
     text_splitter = RecursiveCharacterTextSplitter(

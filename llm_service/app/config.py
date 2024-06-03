@@ -5,7 +5,6 @@ from langchain_community.embeddings import HuggingFaceInstructEmbeddings
 from langchain_community.llms import HuggingFaceHub
 from langchain_community.chat_models.huggingface import ChatHuggingFace
 from langchain.vectorstores.pgvector import PGVector
-from app.custom_retriever import CustomRetriever
 
 load_dotenv(find_dotenv())
 
