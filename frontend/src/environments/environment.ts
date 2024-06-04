@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://backend:6000'
+  apiUrl: 'http://backend:7001'
 };
 
 
