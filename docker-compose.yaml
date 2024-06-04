@@ -23,7 +23,7 @@ services:
     container_name: backend
     build: ./backend
     ports:
-      - "5000:80"
+      - "6000:80"
     depends_on:
       - mongo
     environment:
@@ -35,7 +35,7 @@ services:
     container_name: llm_service
     build: ./llm_service
     ports:
-      - "8000:80"
+      - "7000:80"
     env_file:
       - .env
     depends_on:
