@@ -1,7 +1,11 @@
 FROM postgres:13
 
-RUN apt-get clean && \
-    apt-get update -o Acquire::CompressionTypes::Order::=gz && \
+ENV TMPDIR=/var/tmp
+
+RUN mkdir -p /var/tmp && \
+    chmod 1777 /var/tmp && \
+    apt-get clean && \
+    apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y wget build-essential postgresql-server-dev-13
 
