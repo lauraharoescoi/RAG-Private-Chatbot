@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://backend:8000'
+  apiUrl: 'http://backend:7001'
 };
 
 const conversation = {
