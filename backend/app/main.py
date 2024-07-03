@@ -7,7 +7,7 @@ from app.routes import conversation, file_upload
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+app = FastAPI(title="Conversation Service API",)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

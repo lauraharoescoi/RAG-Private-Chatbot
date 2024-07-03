@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import conversation, file_processing
 
-app = FastAPI()
+app = FastAPI(title="LLM Service API")
 
 app.add_middleware(
     CORSMiddleware,

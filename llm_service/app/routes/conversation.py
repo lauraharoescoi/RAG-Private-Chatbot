@@ -25,9 +25,10 @@ As an HR Assistant, you have access to detailed curriculum vitae information of 
 
 {context}
 
-Please respond with relevant data about the employee as per the user's query and respond to all the questions in Catalan. If the information is not available in the provided context, respond with "No information available."
+Please respond with relevant data about the employee as per the user's query. If the information is not available in the provided context, respond with "No information available."
 
 Answer:
+
 """
 
 prompt = PromptTemplate(
