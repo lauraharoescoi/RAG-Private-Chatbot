@@ -3,7 +3,7 @@ services:
     container_name: chatbot_postgres
     build: ./postgres
     ports:
-      - "5432:5432"
+      - "5006:5432"
     volumes:
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
