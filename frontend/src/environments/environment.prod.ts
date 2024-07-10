@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://162.19.56.57:7001'
+  apiUrl: 'https://chat.insdosl.com'
 };
 
 const conversation = {
