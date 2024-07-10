@@ -6,7 +6,6 @@ services:
       - "5006:5432"
     volumes:
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - vector_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
@@ -26,7 +25,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-      - mongo_config_data:/data/configdb
     networks:
       - default
     healthcheck:
@@ -44,6 +42,8 @@ services:
       - mongo
     environment:
       MONGO_URI: mongodb://chatbot_mongo:27017/
+    volumes:
+      - ./backend:/app
     networks:
       - default
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
@@ -62,6 +62,8 @@ services:
       - .env
     depends_on:
       - postgres
+    volumes:
+      - ./llm_service:/app
     networks:
       - default
     healthcheck:
@@ -75,9 +77,11 @@ services:
     build: ./frontend
     ports:
       - "4201:4200"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     networks:
       - default
-      - nginx_proxy_default
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:4200 || exit 1"]
       interval: 30s
@@ -86,10 +90,7 @@ services:
 
 volumes:
   mongo_data:
-  mongo_config_data:
-  vector_data:
 
 networks:
   default:
-  nginx_proxy_default:
-    external: true
+    driver: bridge
