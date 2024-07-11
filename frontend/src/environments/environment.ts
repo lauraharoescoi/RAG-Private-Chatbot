@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://chat.insdosl.com/api'
+  apiUrl: 'http://localhost:7001/api'
 };
 
 
