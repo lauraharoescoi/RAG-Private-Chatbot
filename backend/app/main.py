@@ -16,8 +16,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(conversation.router, prefix="/conversation", tags=["conversation"])
-app.include_router(file_upload.router, prefix="/files", tags=["file_upload"])
+app.include_router(conversation.router, prefix="/api/conversation", tags=["conversation"])
+app.include_router(file_upload.router, prefix="/api/files", tags=["file_upload"])
 
 for route in app.routes:
     if isinstance(route, APIRoute):
