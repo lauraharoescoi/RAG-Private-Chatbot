@@ -1,4 +1,4 @@
-# 🤖 Private Chatbot
+# 🤖 RAG Private Chatbot
 
 This repository contains the code for my final degree project in Computer Engineering, developed during an internship. The project consists of a private chatbot that uses Retrieval-Augmented Generation (RAG) technology to answer questions about employees based on their resumes and other stored information.
 
