@@ -1,6 +1,6 @@
 # Insdo Chatbot
 
-This repository contains the code for a private chatbot developed by Insdo SL. The chatbot uses a language model (LLM) with LangChain to answer questions about employees based on their resumes and other stored information.
+This repository contains the code for my final degree project in Computer Engineering, developed during an internship at Insdo SL. The project consists of a private chatbot that uses a language model (LLM) with LangChain to answer questions about employees based on their resumes and other stored information.
 
 ## Project Structure
 
